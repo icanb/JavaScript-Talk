@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<title>Better JavaScript</title>
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>Bookstore</h1>
+			<hr />
+		</div>
+		<div class="one-third column">
+			<h3>List of books</h3>
+			<ul id="general_list">
+				<li id="book_1">
+					<span>Book 1	</span>
+					<button>Buy</button>
+				</li>
+				<li id="book_2">
+					<span>Book 2 	</span>
+					<button>Buy</button>
+				</li>
+				<li id="book_3">
+					<span>Book 3	</span>
+					<button>Buy</button>
+				</li>
+			</ul>
+		</div>
+		<div class="one-third column">
+			<h3>Books You're Buying</h3>
+			<ul id="buy_list" class="square">
+				<li id="book_4">
+					<span>Book 4</span>
+					<button>Delete</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+<script>
+
+
+var bookStoreModule = {
+	init : function () {
+		this.generalList = document.getElementById('general_list');
+		this.buyList = document.getElementById('buy_list');
+
+
+		this.buyBookButtons = this.generalList.getElementsByTagName('button');
+		this.deleteBookButtons = this.buyList.getElementsByTagName('button');
+
+		for(var ii=0; ii < this.buyBookButtons.length ; ii++) {
+			this.buyBookButtons[ii].addEventListener("click", this.buyBook);
+		}
+
+		for(var ii=0; ii < this.deleteBookButtons.length ; ii++) {
+			this.deleteBookButtons[ii].addEventListener("click", this.deleteBook);
+		}
+	},
+	generalList : null,
+	buyList : null,
+	buyBookButtons : null,
+	deleteBookButtons : null,
+	buyBook : function (e) {
+
+		var button = e.target || e.srcElement;
+		var listItem = button.parentNode;
+		var bookId = listItem.id;
+
+		bookStoreModule.server.buyRequest(bookId);
+
+		bookStoreModule.carryListItem(listItem, bookStoreModule.generalList, bookStoreModule.buyList);
+		button.childNodes[0].nodeValue = "Delete";
+		button.addEventListener("click", bookStoreModule.deleteBook);
+	    button.removeEventListener("click", bookStoreModule.buyBook, false);
+	},
+
+	deleteBook : function (e) {
+
+		var button = e.target || e.srcElement;
+		var listItem = button.parentNode;
+		var bookId = listItem.id;
+
+		bookStoreModule.server.deleteRequest(bookId);
+
+		bookStoreModule.carryListItem(listItem, bookStoreModule.buyList, bookStoreModule.generalList);
+		button.childNodes[0].nodeValue = "Buy";
+		button.addEventListener("click", bookStoreModule.buyBook);
+		button.removeEventListener("click", bookStoreModule.deleteBook, false);
+
+	},
+	carryListItem : function (item, fromList, toList) {
+		fromList.removeChild(item);
+		toList.appendChild(item);
+	},
+	server : {
+		buyRequest : function (id) {
+			console.log("Buy request sent for:" + id);
+		},
+		deleteRequest : function (id) {
+			console.log("Delete equest sent for:" + id);
+		}
+	}
+}
+
+bookStoreModule.init();
+
+</script>
+</html>
