@@ -44,6 +44,46 @@
 	</div>
 </body>
 <script>
+	console.log("Hello World");
+	var generalList = document.getElementById('general_list');
+	var buyList = document.getElementById('buy_list');
 
+	var buyBookButtons = generalList.getElementsByTagName('button');
+	var deleteBookButtons = buyList.getElementsByTagName('button');
+
+	for(var ii=0; ii < buyBookButtons.length ; ii++) {
+		buyBookButtons[ii].addEventListener("click", buyBook);
+	}
+
+	for(var ii=0; ii < deleteBookButtons.length ; ii++) {
+		deleteBookButtons[ii].addEventListener("click", deleteBook);
+	}
+
+	function buyBook (e) { //content
+		console.log(e);
+		var button = e.target;
+		var listItem = button.parentNode;
+		var bookId = listItem.id;
+		generalList.removeChild(listItem);
+		buyList.appendChild(listItem);
+		button.childNodes[0].nodeValue = "Delete";
+		button.addEventListener("click", deleteBook);
+   		button.removeEventListener("click", buyBook, false);
+	}
+
+	function deleteBook (e) { //content 
+
+		console.log(e);
+		var button = e.target;
+		var listItem = button.parentNode;
+		var bookId = listItem.id;
+		buyList.removeChild(listItem);
+		generalList.appendChild(listItem);
+		button.childNodes[0].nodeValue = "Buy";
+		button.addEventListener("click", buyBook);
+   		button.removeEventListener("click", deleteBook, false);
+
+	}
+	
 </script>
 </html>
